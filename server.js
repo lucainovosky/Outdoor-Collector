@@ -2,30 +2,24 @@ const express = require('express')
 const http = require('http')
 const path = require('path')
 const app = express()
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 3000
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
 
-/*
-connection mongoDB
-mongodb+srv://Luca:dragonforce@cluster0.iqjir.mongodb.net/natours
-*/
+process.on('uncaughtException', err=> {
+  console.log('Uncaught exception, app shutting down')
+  console.log(err.name, err.message)
+  process.exit(1)
+})
 
-let db = 'mongodb+srv://Luca:dragonforce@cluster0.iqjir.mongodb.net/natours'
-let db2 = 'mongodb+srv://Luca:dragonforce@cluster0.iqjir.mongodb.net/?retryWrites=true&w=majority'
+dotenv.config({path: './config.env'})//vado a leggere il file config creato manualmente
+const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD)
 
-mongoose.connect(db2,
-  {
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useUnifiedTopology: true
-  }
-);
-
-const dbMongo = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error: "));
-db.once("open", function () {
-  console.log("Connected successfully");
-});
+//connect to Mongo DB
+mongoose.set("strictQuery", false);//prevent to save non handled data
+mongoose.connect(DB).then(con => {
+  console.log("DB connection OK!!!")
+})
 
 //run the server
 app.use(express.static(__dirname + '/dist/outdoor-collector'))
