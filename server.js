@@ -1,28 +1,27 @@
-const express = require('express')
-const http = require('http')
-const path = require('path')
-const app = express()
-const port = process.env.PORT || 3000
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
-
-process.on('uncaughtException', err=> {
-  console.log('Uncaught exception, app shutting down')
-  console.log(err.name, err.message)
-  process.exit(1)
-})
-
 dotenv.config({path: './config.env'})//vado a leggere il file config creato manualmente
+const app = require('./app')
 const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD)
+const LOCAL_DB = process.env.LOCAL_DATABASE
+const port = process.env.PORT || 8000
 
 //connect to Mongo DB
 mongoose.set("strictQuery", false);//prevent to save non handled data
-mongoose.connect(DB).then(con => {
+mongoose.connect(LOCAL_DB).then(con => {
   console.log("DB connection OK!!!")
 })
 
 //run the server
-app.use(express.static(__dirname + '/dist/outdoor-collector'))
-app.get('/*', (req, res) => res.sendFile(path.join(__dirname)))
-const server = http.createServer(app)
-server.listen(port, () => console.log(`App running on: http://localhost:${port}`))
+const server = app.listen(port, ()=> {
+    console.log(`App running on: http://localhost:${port}`)
+})
+
+//sottoscrivo qui ogni errore non gestito e vado a chiudere l'applicazione
+process.on('unhandledRejection', err=> {
+    console.log('Unhandled Rejection, app shutting down')
+    console.log(err.name, err.message)
+    server.close(()=> {
+        process.exit(1)
+    })
+})
