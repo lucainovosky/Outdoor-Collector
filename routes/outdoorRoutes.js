@@ -11,6 +11,18 @@ router
   .route('/:id')
   .get(outdoorControllers.getOne)
   .delete(outdoorControllers.deleteOne)
-  .patch(outdoorControllers.updataOne)
+  .patch(outdoorControllers.updateOne)
+
+router
+  .route('/filter-season/:season')
+  .get(outdoorControllers.getSeason)
+
+router
+  .route('/filter-location/:location')
+  .get(outdoorControllers.getLocation)
+
+router
+  .route('/filter-bike/bike')
+  .get(outdoorControllers.getBike)
 
 module.exports = router

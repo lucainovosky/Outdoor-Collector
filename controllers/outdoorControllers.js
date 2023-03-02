@@ -1,3 +1,4 @@
+const { async } = require('rxjs');
 const Outdoor = require('../models/outdoorModel')
 const catchAsync = require('../utils/catchAsync')
 
@@ -52,7 +53,7 @@ exports.deleteOne = catchAsync( async(req, res, next) => {
   })
 })
 
-exports.updataOne = catchAsync( async(req, res, next)=> {
+exports.updateOne = catchAsync( async(req, res, next)=> {
   const doc = await Outdoor.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true
@@ -62,6 +63,51 @@ exports.updataOne = catchAsync( async(req, res, next)=> {
     status: 'success',
     data: {
       data: doc
+    }
+  })
+})
+
+exports.getSeason = catchAsync(async(req, res, next)=> {
+
+  const outdoors = await Outdoor.find({
+    season: req.params.season,
+    bike: {$eq: false}
+  })
+
+  res.status(200).json({
+    status: 'success',
+    result: outdoors.length,
+    data: {
+        data: outdoors
+    }
+  })
+})
+
+exports.getLocation = catchAsync(async(req, res, next)=> {
+
+  const outdoors = await Outdoor.find({
+    where: req.params.location,
+    bike: {$eq: false}
+  })
+
+  res.status(200).json({
+    status: 'success',
+    result: outdoors.length,
+    data: {
+        data: outdoors
+    }
+  })
+})
+
+exports.getBike = catchAsync(async(req, res, next)=> {
+
+  const outdoors = await Outdoor.find({bike: {$eq: true}})
+
+  res.status(200).json({
+    status: 'success',
+    result: outdoors.length,
+    data: {
+        data: outdoors
     }
   })
 })
