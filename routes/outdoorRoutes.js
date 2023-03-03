@@ -8,29 +8,33 @@ router
   .post(outdoorControllers.createOne)
 
 router
-  .route('/:id')
+  .route('/filter/:id')
   .get(outdoorControllers.getOne)
   .delete(outdoorControllers.deleteOne)
   .patch(outdoorControllers.updateOne)
 
 router
-  .route('/filter-season/:season')
+  .route('/filter-season')
   .get(outdoorControllers.getSeason)
 
 router
-  .route('/filter-location/:location')
+  .route('/filter-location')
   .get(outdoorControllers.getLocation)
 
 router
-  .route('/filter-bike/bike')
+  .route('/filter-bike')
   .get(outdoorControllers.getBike)
 
-/*router
-  .route('/filter-altitude/altitude')
-  .get(outdoorControllers.getAltitude)*/
+router
+  .route('/filter-altitude')
+  .get(outdoorControllers.getAltitude)
 
 router
-  .route('/filter-level/level')
+  .route('/filter-level')
   .get(outdoorControllers.getLevel)
+
+router
+  .route('/filter-duration')
+  .get(outdoorControllers.getDuration)
 
 module.exports = router

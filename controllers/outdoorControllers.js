@@ -1,6 +1,7 @@
 const { async } = require('rxjs');
 const Outdoor = require('../models/outdoorModel')
 const catchAsync = require('../utils/catchAsync')
+const AppError = require('./../utils/appError')
 
 exports.getAllOutdoor = catchAsync( async(req, res)=> {
 
@@ -54,10 +55,15 @@ exports.deleteOne = catchAsync( async(req, res, next) => {
 })
 
 exports.updateOne = catchAsync( async(req, res, next)=> {
+
   const doc = await Outdoor.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true
   })
+
+  if(doc==null) {
+    return next(new AppError('No document found with that ID', 404))
+  }
 
   res.status(200).json({
     status: 'success',
@@ -70,9 +76,13 @@ exports.updateOne = catchAsync( async(req, res, next)=> {
 exports.getSeason = catchAsync(async(req, res, next)=> {
 
   const outdoors = await Outdoor.find({
-    season: req.params.season,
+    season: req.body.season,
     bike: {$eq: false}
   })
+
+  if(outdoors==null) {
+    return next(new AppError('Invalid parameters', 404))
+  }
 
   res.status(200).json({
     status: 'success',
@@ -86,9 +96,13 @@ exports.getSeason = catchAsync(async(req, res, next)=> {
 exports.getLocation = catchAsync(async(req, res, next)=> {
 
   const outdoors = await Outdoor.find({
-    where: req.params.location,
+    where: req.body.location,
     bike: {$eq: false}
   })
+
+  if(outdoors==null) {
+    return next(new AppError('Invalid parameters', 404))
+  }
 
   res.status(200).json({
     status: 'success',
@@ -103,6 +117,10 @@ exports.getBike = catchAsync(async(req, res, next)=> {
 
   const outdoors = await Outdoor.find({bike: {$eq: true}})
 
+  if(outdoors==null) {
+    return next(new AppError('Invalid parameters', 404))
+  }
+
   res.status(200).json({
     status: 'success',
     result: outdoors.length,
@@ -116,8 +134,12 @@ exports.getAltitude = catchAsync(async(req, res, next)=> {
 
   const intAltitude = req.body.altitude * 1
   const outdoors = await Outdoor.find({
-    altitude: {$gte: intAltitude},
-    bike: {$eq: false}})
+    altitude: {$gte: intAltitude}
+  })
+
+  if(outdoors==null||intAltitude==null||intAltitude<0) {
+    return next(new AppError('Invalid parameters', 404))
+  }
 
   res.status(200).json({
     status: 'success',
@@ -129,10 +151,14 @@ exports.getAltitude = catchAsync(async(req, res, next)=> {
 })
 
 exports.getLevel = catchAsync(async(req, res, next)=> {
-console.log('----->' + req.body.level)
+
   const outdoors = await Outdoor.find({
-    level: req.body.level,
-    bike: {$eq: false}})
+    level: req.body.level
+  })
+
+  if(outdoors==null) {
+    return next(new AppError('Invalid parameters', 404))
+  }
 
   res.status(200).json({
     status: 'success',
@@ -140,5 +166,24 @@ console.log('----->' + req.body.level)
     data: {
         data: outdoors
     }
+  })
+})
+
+exports.getDuration = catchAsync(async(req, res, next)=> {
+
+  const outdoors = await Outdoor.find({
+    duration: req.body.duration
+  })
+
+  if(outdoors==null) {
+    return next(new AppError('Invalid parameters', 404))
+  }
+
+  res.status(200).json({
+    status: 'success',
+    result: outdoors.length,
+    data: {
+        data: outdoors
+     }
   })
 })
