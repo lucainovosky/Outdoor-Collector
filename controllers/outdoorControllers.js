@@ -111,3 +111,34 @@ exports.getBike = catchAsync(async(req, res, next)=> {
     }
   })
 })
+
+exports.getAltitude = catchAsync(async(req, res, next)=> {
+
+  const intAltitude = req.body.altitude * 1
+  const outdoors = await Outdoor.find({
+    altitude: {$gte: intAltitude},
+    bike: {$eq: false}})
+
+  res.status(200).json({
+    status: 'success',
+    result: outdoors.length,
+    data: {
+        data: outdoors
+    }
+  })
+})
+
+exports.getLevel = catchAsync(async(req, res, next)=> {
+console.log('----->' + req.body.level)
+  const outdoors = await Outdoor.find({
+    level: req.body.level,
+    bike: {$eq: false}})
+
+  res.status(200).json({
+    status: 'success',
+    result: outdoors.length,
+    data: {
+        data: outdoors
+    }
+  })
+})

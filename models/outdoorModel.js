@@ -55,7 +55,7 @@ const outdoorSchema = new mongoose.Schema({
     type: Boolean,
   },
   level : {
-    type: Number,
+    type: String,
   },
   notes : {
     type: String,

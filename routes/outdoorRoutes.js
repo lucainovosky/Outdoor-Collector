@@ -25,4 +25,12 @@ router
   .route('/filter-bike/bike')
   .get(outdoorControllers.getBike)
 
+/*router
+  .route('/filter-altitude/altitude')
+  .get(outdoorControllers.getAltitude)*/
+
+router
+  .route('/filter-level/level')
+  .get(outdoorControllers.getLevel)
+
 module.exports = router
